@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-Website Audit Tool — Standalone Backend
-"""
 import requests as req, re, time as t
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -11,7 +8,7 @@ CORS(app)
 
 @app.route('/')
 def home():
-    return jsonify({'service': 'Website Audit API', 'usage': 'POST /audit with {"url":"https://site.com"}'})
+    return jsonify({'service': 'Website Audit API', 'usage': 'POST /audit'})
 
 @app.route('/health')
 def health():
@@ -47,10 +44,12 @@ def audit():
             100 if size_kb < 500 else 70 if size_kb < 1000 else 40, 100 if r.status_code == 200 else 0
         ]) / 9)
         
-        return jsonify({'success': True, 'load_time': load_time, 'size_kb': size_kb,
-                       'status': r.status_code, 'ssl': has_https, 'title': has_title,
-                       'description': has_desc, 'mobile': has_viewport, 'h1': has_h1,
-                       'alt_tags': round((has_alt / total_img) * 100), 'overall': overall})
+        return jsonify({
+            'success': True, 'load_time': load_time, 'size_kb': size_kb,
+            'status': r.status_code, 'ssl': has_https, 'title': has_title,
+            'description': has_desc, 'mobile': has_viewport, 'h1': has_h1,
+            'alt_tags': round((has_alt / total_img) * 100), 'overall': overall
+        })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)[:100]})
 
